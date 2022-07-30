@@ -48,7 +48,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}")
-    @PreAuthorize("hasAuthority(\"ROLE_USER\") or hasAuthority(\"ROLE_ADMIN\")"
+    @PreAuthorize("hasAuthority(\"ROLE_USER\")"
             + "and authentication.principal.equals(#orderId) ")
     public OrderView updateOrder(@PathVariable(name = "orderId")
                                              int orderId,
