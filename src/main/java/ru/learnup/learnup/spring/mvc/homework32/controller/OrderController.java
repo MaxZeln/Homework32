@@ -47,16 +47,21 @@ public class OrderController {
         );
     }
 
-    @PutMapping("/{orderId}")
-    @PreAuthorize("hasAuthority(\"ROLE_USER\")"
-            + "and authentication.principal.equals(#orderId) ")
+   @PutMapping("/{orderId}")
+    @PreAuthorize("hasAuthority(\"ROLE_USER\") or hasAuthority(\"ROLE_ADMIN\")")
     public OrderView updateOrder(@PathVariable(name = "orderId")
                                              int orderId,
-                                 @RequestBody OrderView order) {
-        OrderDto dto = orderMapper.mapFromView(order);
-        return  orderMapper.mapToView(
-                orderService.createOrder(dto)
-        );
+                                 @RequestBody OrderView order,
+                                 @AuthenticationPrincipal User user) {
+        System.out.println(user);
+        if (order.getUser().getId() == user.getId()) {
+            OrderDto dto = orderMapper.mapFromView(order);
+            return  orderMapper.mapToView(
+                    orderService.createOrder(dto)
+            );
+        } else {
+            throw new RuntimeException("Access denied!");
+        }
     }
 
     @DeleteMapping("/{orderId}")
